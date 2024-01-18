@@ -5,7 +5,7 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
-#define MAX_CLIENTS 10
+#define MAX_CLIENTS 12
 #define BUFFER_SIZE 1024
 #define USERNAME_SIZE 32
 
