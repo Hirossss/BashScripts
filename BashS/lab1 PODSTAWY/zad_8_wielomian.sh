@@ -1,0 +1,1 @@
+# miejsca zerowe wielomianu

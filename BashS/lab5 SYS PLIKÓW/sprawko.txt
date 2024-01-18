@@ -1,0 +1,221 @@
+Zad 0.
+
+Plik pusty.
+$ dd if=/dev/zero of=zero.dat bs=1M count=100
+100+0 records in
+100+0 records out
+104857600 bytes (105 MB, 100 MiB) copied, 0,0780252 s, 1,3 GB/s
+
+Plik z danymi losowymi.
+$ dd if=/dev/urandom of=losowy.dat bs=1M count=100
+100+0 records in
+100+0 records out
+104857600 bytes (105 MB, 100 MiB) copied, 0,991367 s, 106 MB/s
+
+Plik z powielonymi danymi losowymi.
+$ dd if=/dev/urandom of=powielony-10MB.dat bs=1M count=10
+10+0 records in
+10+0 records out
+10485760 bytes (10 MB, 10 MiB) copied, 0,0675625 s, 155 MB/s
+
+$ cat powielony-10MB.dat >> powielam (tak 10 razy)
+
+$ dd if=/dev/urandom of=plik1KB bs=1K count=1
+1+0 records in
+1+0 records out
+1024 bytes (1,0 kB, 1,0 KiB) copied, 0,000136378 s, 7,5 MB/s
+
+
+skrypt w bashu
+if [ -f "$1" ]; then
+    # Pętla wykonująca polecenie 10^5 razy
+    for ((i=1; i<=100000; i++)); do
+        cat "$1" >> powielony-1kB.dat
+    done
+else
+    echo "Podany argument nie jest plikiem."
+fi
+
+zajmuje to jednak dość sporo czasu.
+
+Zad 1.1
+
+$ gzip -k powielony-10MB.dat 
+z opcją k żeby zachować pierwotny plik.
+
+Największą różnicę widać przy pliku wypełnionym zerami. To dzięki powtarzalności ciągu.
+
+$ du zero.dat
+102400	zero.dat
+$ du zero.dat.gz
+100	zero.dat.gz
+
+Zad 1.2
+
+Dowiązanie miękkie: $ ln -s losowy.dat losowy-soft.dat, efekt losowy-soft.dat -> losowy.dat
+Dowiązanie twarde: $ ln losowy.dat losowy-hard.dat, efekt osobny plik losowy-hard.dat
+
+Porównanie zajętości przestrzeni.
+
+$ du losowy-soft.dat 
+0	losowy-soft.dat
+$ du losowy-hard.dat 
+102400	losowy-hard.dat
+
+Dowiązania symboliczne są mniejsze od twardych linków, ponieważ przechowują tylko ścieżkę do pliku docelowego.
+Twarde linki mają taką samą wielkość i umiejscowienie danych na dysku jak oryginalny plik.
+
+Zad 1.3
+
+$ mkfs.ext4 zero.dat
+mke2fs 1.46.5 
+Discarding device blocks: done                            
+Creating filesystem with 25600 4k blocks and 25600 inodes
+
+Allocating group tables: done                            
+Writing inode tables: done                            
+Creating journal (1024 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+$ dumpe2fs zero.dat
+dumpe2fs 1.46.5 (30-Dec-2021)
+Filesystem volume name:   <none>
+Last mounted on:          <not available>
+Filesystem UUID:          3abfbf2e-3611-4e3f-98d0-325bfd2a6718
+
+$ sudo nano /etc/fstab
+
+tam dodajemy odpowiednią linijkę:
+
+UUID=3abfbf2e-3611-4e3f-98d0-325bfd2a6718 [sciezka gdzie montujemy] ext4 rw,user,noauto
+
+Zad 1.4 
+
+przełozone do innych labow.
+
+Zad 1.5
+
+Sam program.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <time.h>
+
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        fprintf(stderr, "Sposób użycia: %s <rozmiar bufora> <plik.src> <plik.trg>\n", argv[0]);
+        return 1;
+    }
+
+    int rozmiarBufora = atoi(argv[1]);
+    const char *plikSrc = argv[2];
+    const char *plikTrg = argv[3];
+
+    int srcFd = open(plikSrc, O_RDONLY);
+    if (srcFd == -1) {
+        perror("Nie można otworzyć pliku źródłowego");
+        return 1;
+    }
+
+    int trgFd = open(plikTrg, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    if (trgFd == -1) {
+        perror("Nie można otworzyć pliku docelowego");
+        close(srcFd);
+        return 1;
+    }
+
+    char *bufor = (char *)malloc(rozmiarBufora);
+
+    clock_t start, stop;
+    start = clock();
+
+    ssize_t bytesRead, bytesWritten;
+    while ((bytesRead = read(srcFd, bufor, rozmiarBufora)) > 0) {
+        bytesWritten = write(trgFd, bufor, bytesRead);
+        if (bytesWritten != bytesRead) {
+            fprintf(stderr, "Błąd podczas zapisu do pliku docelowego\n");
+            close(srcFd);
+            close(trgFd);
+            free(bufor);
+            return 1;
+        }
+    }
+
+    stop = clock();
+    double duration = ((double)(stop - start)) / CLOCKS_PER_SEC * 1000; // czas w milisekundach
+
+    printf("Czas kopiowania: %.2f ms\n", duration);
+
+    close(srcFd);
+    close(trgFd);
+    free(bufor);
+
+    return 0;
+}
+
+Zad 1.6
+
+Znajdywanie zapętlonych dowiązań symbolicznych.
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+    echo "Sposób użycia: $0 <katalog>"
+    exit 1
+fi
+
+katalog=$1
+
+find "$katalog" -type l | while read link; do
+    target=$(readlink "$link")
+    
+    if [ -e "$target" ]; then
+        # Sprawdzenie, czy link jest zapętlony
+        if [ "$target" -ef "$link" ]; then
+            echo "Zapętlony link: $link -> $target"
+        fi
+    else
+        echo "Niezidentyfikowany cel linku: $link"
+    fi
+done
+
+Wszystkie przypadki hardlinkowania.
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+    echo "Sposób użycia: $0 <katalog>"
+    exit 1
+fi
+
+katalog=$1
+
+find "$katalog" -type f | while read file; do
+    links=$(stat -c "%h" "$file")
+
+    if [ "$links" -gt 1 ]; then
+        echo "Twardy link: $file (Liczba dowiązań: $links)"
+    fi
+done
+
+Zad 1.8
+
+polecenie:
+$ ls -la | awk '{print $1}' | sort | uniq -c | sort -rn | awk '$1 > 1 {print $1, $2}'
+
+dla mojego katalogu
+11 -rw-rw-r--
+4 -rwxrwxr-x
+
+
+
+
+
+
+
+
+
+
+

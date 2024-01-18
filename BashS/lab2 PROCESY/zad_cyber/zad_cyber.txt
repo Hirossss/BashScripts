@@ -1,0 +1,90 @@
+Zad. Cyber
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+
+int global_variable = 42; // zmienna globalna
+
+int main() {
+    int local_variable; // zmienna lokalna
+    int input_var; // wprowadzania liczby calkowitej
+
+    printf("Wartość zmiennej globalnej: %d\n", global_variable);
+    printf("Proces macierzysty (PID=%d)\n", getpid());
+
+    printf("Podaj zmienną całkowitą w procesie macierzystym: ");
+    scanf("%d", &input_var);
+
+    pid_t pid = fork();
+
+    if (pid < 0) {
+        perror("Błąd funkcji fork()");
+        return 1;
+    } else if (pid == 0) { // proces dziecka
+        printf("Proces potomny (PID=%d)\n", getpid());
+        printf("Podaj zmienną całkowitą w procesie potomnym: ");
+        scanf("%d", &input_var);
+        printf("\n\nWartość zmiennej lokalnej w procesie potomnym: %d", input_var);
+
+        local_variable = input_var;
+    } else { 
+        local_variable = input_var;
+
+        wait(NULL);
+
+        printf("\nWartość zmiennej globalnej: %d\n", global_variable);
+        printf("Wartość zmiennej lokalnej w procesie macierzystym: %d\n", local_variable);
+    }
+
+    return 0;
+}
+
+
+Odp do pytan.
+1.
+$ pstree 3892
+cybermod───cybermod
+$ pstree 3893
+cybermod
+2. Proces macierzysty i proces potomny mają dostęp do tych samych zasobów globalnych (takie jak global_variable, file_pointer) oraz do zmiennych lokalnych (np. local_variable, dynamic_string). Oznacza to, że zarówno proces macierzysty, jak i potomny mogą modyfikować te zasoby. W przypadku zmiennych lokalnych, zmiany dokonane przez jeden proces nie wpłyną na drugi, ponieważ każdy proces ma swoją kopię zmiennych lokalnych.
+
+$ ./cybermod2
+Wartość zmiennej globalnej: 42
+Proces macierzysty (PID=4214)
+Podaj zmienną całkowitą w procesie macierzystym: 200
+Proces potomny (PID=4215)
+Podaj zmienną całkowitą w procesie potomnym: 300
+
+
+Wartość zmiennej lokalnej w procesie potomnym: 300
+Wartość zmiennej globalnej: 42
+Wartość zmiennej lokalnej w procesie macierzystym: 200
+
+3. Proces potomny odczyta wprowadzone dane z klawiatury. To dlatego, że proces macierzysty czeka na zakończenie procesu potomnego za pomocą wait().
+4. Po zwyklym zakonczeniu, potomny tez sie zakonczy.  Po zakonczeniu kill -9, proces potemny dalej funkcjonuje jako sierota.
+
+Zadanie podsumowujace ulimit:
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    int i = 0;
+    while (1) {
+        pid_t child_pid = fork();
+        if (child_pid == -1) {
+            printf("Nie udało się utworzyć procesu potomnego %d\n", i);
+            break;
+        } else if (child_pid == 0) {
+            printf("Proces potomny %d\n", i);
+            break;
+        }
+        i++;
+    }
+    return 0;
+}
+
