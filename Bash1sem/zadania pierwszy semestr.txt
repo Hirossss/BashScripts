@@ -1,0 +1,1483 @@
+Nikodem Jakubowski
+
+Laboratorium 1
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Zadania:
+
+1. Przy pomocy komendy cat obejrzyj zawartość pliku /etc/passwd.
+Wykonaj komendy cat /etc/passwd i cat /etc/passwd | more.
+Porównaj ich działanie.
+
+$ cat /etc/passwd	--> wyświetla zawartość pliku /etc/passwd
+$ cat /etc/passwd | more	--> wyświetla początkową zawartość pliku i pozwala go przewijać scrollem
+
+2. Do czego służy komenda less? Zastosuj ją do pliku /etc/group. Sprawdź działanie komendy less dla pliku /etc/passwd dla wyszuka-
+nia wszystkich napisów 12.
+
+$ cat /etc/group | less		--> nie wczytuje całego pliku, pozwala go przewijać w tył i w przód
+$ cat /etc/group | less -p 12		--> zakreśli wszystkie "12" w pliku
+
+3. Korzystając z komend head oraz tail, wypisz 17 pierwszych oraz
+21 ostatnich linii pliku /etc/passwd. Jak wypisać 27. linię pliku
+/etc/passwd?
+
+$ head -n 17 /etc/passwd	--> wyświetla 17 pierwszych linii pliku 
+$ tail -n 21 /etc/passwd	--> wyświetla 21 ostatnich linii pliku
+$ head -n 27 /etc/passwd | tail -n 1	--> wyświetla 27 linię pliku, czyli:
+haldaemon:x:82:82:User for HAL:/var/run/hald:/bin/false
+
+4. Sprawdź w manualu składnię oraz przeznaczenie komendy wc.
+
+$ man wc	--> liczy ilość znaków, wyrazów, lini
+
+5. Do czego służy komenda uniq?
+
+$ man uniq	--> informuje o powtórzonych liniach lub je pomija
+
+6. Do czego służy komenda cal? Jakie są jej opcje i argumenty? Sprawdź,
+w jaki dzień tygodnia wypada Boże Narodzenie w tym roku. Ile dni miał
+miesiąc wrzesień w 1752 roku?
+
+$ man cal	--> wypisze kalendarz
+
+$ cal 25 12 2021	--> podkreśli dzień 25.12.2021 r. (sobota)
+
+$ cal 9 1752	--> wrzesień miał 19 dni 
+
+7. Jaką komendą uruchamia się kalkulator (w konsoli)?
+
+$ apropos calculator
+bc                   (1)  - An arbitrary precision calculator language
+dc                   (1)  - an arbitrary precision calculator
+sc                   (1)  - spreadsheet calculator
+xcalc                (1)  - scientific calculator for X
+
+8. Do czego służy komenda pwd (sprawdź w manualu). Zobacz, w którym
+miejscu drzewa katalogów aktualnie się znajdujesz.
+
+$ man pwd	--> wypisuje w którym miejscu drzewa katalogów aktualnie znajduje się użytkownik
+
+$ pwd	--> /home/ietgrp/jakubows
+
+9. Do czego służy komenda cd? Przejdź do katalogu głównego 
+(katalog root, /), do katalogu /tmp, /usr. 
+Przejdź do katalogu osobistego,
+używając minimalnej liczby znaków w linii komend.
+
+$ man cd	--> przenosi użytkownika do danego katalogu
+$ cd /	--> przeniesie do katalogu głównego
+$ cd /tmp	--> przeniesie do katalogu /tmp
+$ cd /usr	--> przeniesie do katalogu /usr
+$ cd ~	--> przeniesie do katalogu osobistego
+
+
+10. Do czego służy komenda ls? Sprawdź parametry jej wywołania.
+Sprawdź zawartość katalogu /tmp, /usr/include, katalogu osobistego.
+Jakie znaczenie mają opcje –l, -d, -i, -t, -R?
+
+$ man ls	--> komenda 'ls' listuje zawartość katalogu
+$ ls /tmp	--> wylistuje zawartość folderu /tmp
+$ ls /usr/include --> wylistuje zawartość katalogu /usr/include
+     -l - listuje szczegóły zawartości np. uprawnienia
+     -d - zapobiega listowaniu folder
+     -i - pokazuje numer każdego pliku
+     -t - listuje foldery sortując według czasu modyfikacji
+     -R - wyświetlanie podkatalogów rekursywnie
+
+11. Do czego służy komenda echo? Sprawdź wartość zmiennych środowi-
+skowych HOME, PATH oraz PS1, korzystając z komendy echo.
+
+$ man echo	--> pokazuje linię tekstu
+
+$ echo $HOME
+/home/ietgrp/jakubows
+$ echo $PATH
+/bin:/usr/bin:/usr/local/bin:/usr/games:/usr/lib64/qt/bin
+$ echo $PS1
+\u@\h:\w\$
+
+
+12. Gdzie w systemie zapisywana jest informacja o wszystkich (udanych
+i nieudanych) podłączeniach do systemu. Zapoznaj się z komendą last.
+
+$ man last	--> przedstawia podłączonych użytkowników
+
+13. Do czego służy komenda who? Jakie są opcje i argumenty jej wywoła-
+nia? Jakich informacji dostarcza komenda w?
+
+$ man who	--> pokazuje kto jest aktualnie zalogowany
+$ w	--> pokazuje kto jest zalogowany i co w danym momencie robi
+
+14. Sprawdź jakich informacji dostarcza komenda id. Jaki jest twój numer
+identyfikacyjny w systemie (UID), jaki grupy podstawowej (GUID), do
+jakich grup należysz? 
+
+$ id	--> wyświetla id wskazanego użytkownika/grupy. Gdy żaden konkretny nie jest wskazany, wyświetla dla obecnego użytkownika
+uid=28561(jakubows) gid=292(ietgrp) groups=292(ietgrp)
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Podaj postać linii komend, która odpowiada na pytanie:
+
+1. Ilu użytkowników lokalnych jest zdefiniowanych w systemie?
+
+$ cat /etc/passwd | wc -l	--> 8061
+
+2. Jak w systemie opisany został (zawartość 5-tej kolumny pliku
+/etc/passwd) użytkownik, którego numer identyfikacyjny wyno-
+si 14?
+
+$ awk -F: '{if($3=="14"){print $5}}' /etc/passwd	--> nic nie wypisało bo nie ma takiego usera
+kontrprzykład, że działa:  awk -F: '{if($3=="28561"){print $5}}' /etc/passwd	--> Nikodem Jakubowski
+
+3. Ilu jest użytkowników w systemie, których grupa podstawowa jest
+Twoją grupą?
+
+$ cat /etc/passwd | cut -d: -f 4 | grep "$(id -g)" | wc -l	--> 1109 osób // $() - podkomenda która się najpierw wykonuje
+$ cat /etc/passwd | cut -d: -f 4 | grep "292" | wc -l	--> można też wpisać id grupy bezpośrednio dla danego użytkownika ale to bardziej brutalne rozwiązanie
+
+4. Ilu użytkowników zdefiniowanych w systemie używa jako podstawowe-
+go interpretera poleceń interpretera Bash?
+
+awk -F: '{ if($7 == "/bin/bash") { print $7 } }' /etc/passwd	--> 8008
+
+5. Ilu użytkowników w systemie posiada numer identyfikacyjny UID
+większy od 12000?
+
+$ awk -F: '{if($3 > 12000){print}}' /etc/passwd | wc -l	--> Odp. 8022
+
+6. Jak wylistować zawartość kilku katalogów na raz (w jednej komendzie)?
+
+$ ls -R
+
+7. Jak wypisać za pomocą jednej komendy echo cyfry od 0 do 5, każdą
+w osobnej linii?
+
+$ echo -e "0\n1\n2\n3\n4\n5"	--> //-e pozwala na interpretację backlasha
+	0
+	1
+	2
+	3
+	4
+	5
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Zadania sprawdzające:
+
+1. Ile plików i katalogów znajduje się w katalogu głównym (/)?
+
+$ ls / | wc -w	--> Odp. 21
+
+2. Ilu użytkowników jest aktualnie zalogowanych?
+
+$ who | wc -l	--> Odp. 16
+
+3. Ile słów liczy plik /usr/include/utime.h?
+
+$ cat /usr/include/utime.h | wc -w	--> Odp. 227
+
+
+
+Nikodem Jakubowski
+
+Laboratorium 2 18.11.2022r. 
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Zadania:
+
+1. Zapoznaj się z poleceniami tr oraz cut. W jaki sposób mogą one
+zastąpić podstawowe funkcje dostarczane przez awk?
+
+$ man tr - usuwa lub zamienia litery
+$ man cut - wybiera wybrane sekcje z lini
+
+2. Jak w systemie opisany został (zawartość piątej kolumny pliku
+/etc/passwd) użytkownik, którego numer identyfikacyjny (UID)
+wynosi 14?
+
+$ awk -F: '{ if ($3 == 14) { print $5 } }' /etc/passwd
+nie działa bo nie istnieje taki
+kontr przykład: $ awk -F: '{ if ($3 == 28561) { print $5 } }' /etc/passwd --> Nikodem Jakubowski
+
+3. Ilu użytkowników zdefiniowanych w systemie używa jako podstawowe-
+go interpretera poleceń interpretera Bash?
+
+$ awk -F: '{ if($7 == "/bin/bash") { print $7 } }' /etc/passwd | wc -l  
+7225
+
+4. Ilu użytkowników w systemie posiada numer identyfikacyjny (UID)
+większy od 20?
+
+$ awk -F: '{ if ($3 > 20) {print} }' /etc/passwd | wc -l              
+8141
+
+5. Jaki jest największy numer grupy lokalnej w systemie?
+
+$ cat /etc/passwd | cut -d: -f 4 | sort -n | tail -n 1
+344
+
+6. Ile jest w systemie grup, które nie są grupą podstawową dla ani jednego
+jednego użytkownika?
+
+$ echo $(($(cat /etc/group | wc -l)-$(awk -F: '{ print $4 }' /etc/passwd |sort |uniq |wc -l) ))
+53
+
+!! sort często dajemy przed uniqiem, te dwa syntaxy dobrze "współpracują" !!
+
+7. Ile grup w systemie nie jest grupami dodatkowymi dla żadnego użyt-
+kownika?
+
+$ awk -F: '{ if($4 == "") { print $4 } }' /etc/group | wc -l
+92
+
+8. Ilu jest użytkowników w systemie, których grupa podstawowa jest
+Twoją grupą?
+
+$ cat /etc/passwd | cut -d: -f 4 | grep -E "$(id -g)" | wc -l 
+1120
+
+9. Wypisz użytkowników, których nazwa składa się z dokładnie 8 znaków.
+
+$ cat /etc/passwd | cut -d: -f 1 | grep -E "^.{8}$" | less
+
+10. W katalogu domowym utwórz plik zawierający strony manuala dla
+komendy ls. Jakie są różnice w działaniu operatorów przekierowania >
+oraz >>?
+
+$ man ls > ~/plik.txt (to jest nadpisanie) nadpisuje plik 
+$ man ls >> ~/plik.txt (to jest dodanie nowej zawartości do istniejącej już zawartości pliku == dodanie) dopisuje do pliku
+
+
+
+Operacje na plikach:
+
+1. Zapoznaj się z poleceniami mkdir, rmdir oraz ls. Następnie, wykorzy-
+stując jedno wywołanie polecenia mkdir, utwórz w swoim katalogu
+osobistym strukturę katalogów tak, aby poprawne były następujące
+ścieżki:
+• $HOME/c2
+• $HOME/c2/text
+• $HOME/c2/bin
+
+$ mkdir -p $HOME/c2/{text, bin}	{} --> tworzenie katalogow na tym samym poziomie
+
+2. Sprawdź prawa dostępu katalogów. Co decyduje o ich postaci? Czy
+stojąc w katalogu $HOME jednym wywołaniem komendy ls można
+obejrzeć zawartość wszystkich katalogów do samego końca drzewa
+plików? Sprawdź to w manualu.
+
+$ ls -l -R
+
+3. Sprawdź prawa dostępu utworzonego w poprzednim zadaniu pliku.
+Zapoznaj się z poleceniami chmod i chown. Zmień prawa dostępu
+pliku tak, aby tylko jego właściciel indywidualny mógł go odczytać
+i zapisać.
+
+$ chmod 600 ~/plik.txt
+$ ls -l
+total 16
+drwxr-xr-x 2 jakubows ietgrp 4096 lis  22 20:26 help/
+-rw------- 1 jakubows ietgrp 9691 lis  22 20:49 plik.txt
+
+4. Ustaw prawa dostępu pliku i katalogu, w którym plik się znajduje, tak,
+aby pliku nie można było usunąć komendą rm. Skopiuj plik na dowolny
+inny. Jakie są prawa dostępu nowego pliku? Zmień prawa dostępu
+nowego pliku tak, aby tylko właściciel indywidualny i inni członkowie
+jego grupy podstawowej mogli go odczytać.
+
+$ touch ~/c2/przyklad.txt		--> tworze przyklad.txt wewnatrz c2
+$ chmod 555 ~/c2		--> tylko czytanie i wykonywanie (pisanie powoduje mozliwosc usuniecia)
+$ cp ~/c2/przyklad.txt $HOME		--> kopiuje do katalogu home
+$ chmod 440 $HOME/przyklad.txt	--> nadaje uprawnienia na read read nic 		 
+$ ls -l
+total 8
+dr-x------ 4 jakubows ietgrp 4096 lis  22 21:49 c2/
+drwxr-xr-x 2 jakubows ietgrp 4096 lis  22 20:26 help/
+-r--r----- 1 jakubows ietgrp    0 lis  22 21:50 przyklad.txt		--> moga tylko czytac, zgadza się 
+
+5. Skopiuj z katalogu /bin do swojego katalogu ~/c2/bin plik ls,
+zmieniając jego nazwę na moj_ls. W jaki sposób można skopiować cały
+katalog /usr/include/scsi?
+
+$ cp /bin/ls c2/bin/moj_ls
+$ cp -R /usr/include/scsi [ściezka docelowa]
+
+
+
+Zadanie sprawdzające
+
+Podaj pełną komendę zwracającą konkretną wartość (nie należy np.
+liczyć wierszy „ręcznie”):
+1. Ile jest takich grup, które są grupami podstawowymi dla dwóch lub
+trzech użytkowników?
+
+$ cat /etc/passwd | cut -d: -f 4 | sort -n | uniq -c | awk '{print$1}' | grep -E "^[23]{1}$" | wc -l
+3
+
+2. Podaj liczbę lokalnych użytkowników, którzy nie mogą się zalogować
+(/sbin/nologin jako shell)?
+
+$ cat /etc/passwd | cut -d: -f 7 | grep -E "/sbin/nologin" | wc -l
+1
+
+3. Ile jest osób w /etc/passwd o nazwisku Nowak?
+
+$ cat /etc/passwd | cut -d: -f 5 | awk '{print $2}' | grep -E "^Nowak$" | wc -l 
+37
+
+4. Ilu użytkowników było jednorazowo zalogowanych co najmniej godzinę
+(wykorzystaj wyniki polecenia last)?
+
+$ last | awk '{print $10}' | awk -F'(' '{print $2}' | awk -F: '{if($1>=1){print $1}}' | wc -l
+1048
+
+$ last | awk '{print $10}' | tr -d '('')' | awk -F: '{if($1>=1){print $1}}' | tr -d 'in' | grep -v "^$" | wc -l  
+424
+
+#gdy nabralem wprawy to drugie rozwiazanie o wiele lepsze, grep zapewnia ze nie ma pustych linii po uzyciu tr 
+
+
+
+
+Nikodem Jakubowski
+
+Laboratorium 3 25.11.2022r. 
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Zadania:
+
+1. Czy znajdując się w katalogu $HOME, jednym wywołaniem komendy
+ls można obejrzeć zawartość wszystkich katalogów do samego końca
+drzewa plików (czyli w sposób rekursywny)? Sprawdź to w manualu.
+
+$ ls -R -all
+
+2. Ustal, w jaki sposób oznaczane są ustawione uprawnienia dodatkowe
+(SUID, SGID i SVTX).
+
+SUID - dla właściciela w miejscu x (S)
+SGID - dla grupy w miejscu x (S)
+SVTX (sticky bit) - dla pozostałych użytkowników w miejscu x (S)
+
+3. W katalogu $HOME/c2/text utwórz plik zawierający strony podręczni-
+ka dla komendy ls. Sprawdź prawa dostępu utworzonego pliku. W jaki sposób i przez kogo mogą zostać one zmienione?
+
+$ man ls > $HOME/c2/text/ls.txt
+
+~/c2/text$ ls -l
+total 12
+-rw-r--r-- 1 jakubows ietgrp 9691 gru   1 12:19 ls.txt
+
+użytkownik może czytać i zapisywać, osoby z grupy mogą czytać, a pozostali też mogą czytać
+
+4. Zmień prawa dostępu do utworzonego pliku tak, aby tylko jego
+właściciel indywidualny mógł go odczytać i zapisać. Ustaw prawa
+dostępu pliku i katalogu, w którym plik się znajduje tak, aby pliku nie
+można było usunąć komendą rm.
+
+$ chmod 600 $HOME/c2/text/ls.txt		- użytkownik może czytać i zapisywać
+
+$ chmod 500 $HOME/c2/text  			- katalog można tylko wykonywać (np. wejść do niego komendą "cd" i czytać)
+
+5. Skopiuj plik na dowolny inny. Jakie są prawa dostępu nowego pliku?
+Zmień prawa dostępu nowego pliku tak, aby tylko właściciel indywidu-
+alny i inni członkowie jego grupy podstawowej mogli go odczytać.
+
+~/c2/text$ cp ls.txt ls2.txt
+~/c2/text$ ls -l
+total 24
+-rw------- 1 jakubows ietgrp 9691 gru   1 12:19 ls.txt
+-rw------- 1 jakubows ietgrp 9691 gru   1 12:28 ls2.txt		- prawa są takie same jak poprzedniego
+
+$ chmod 440 ~/c2/text/ls2.txt							- teraz tylko użytkownik i grupa mogą go czytać
+
+6. W jaki sposób ustawiane są domyślne prawa do tworzonych przez
+użytkownika plików? Jak to zmienić?
+
+$ man umask
+
+od wartosci 0666 zaczynajac od drugiego miejsca odejmowana jest wartość umask, można zmieniać umask by zmieniać prawa domyśne plików
+
+7. Podaj nazwę pliku w katalogu domowym (rekursywnie) o największym
+rozmiarze. Jaki jest największy plik tylko w katalogu domowym i jego
+bezpośrednich podkatalogach?
+
+$ find ~ -type f -exec ls -R -l {} + | awk '{print $5,$9}'|sort -n | tail -n 1                                                                                                          
+13337 /home/ietgrp/jakubows/.bash_history
+
+8. Podaj nazwę pliku w katalogu domowym (rekursywnie) o największej
+ilości bloków.
+
+$ find ~ -type f -exec du {} + | sort -n | tail -n 1			- jeśli po blokach to korzystamy z "du" !!                              
+16	/home/ietgrp/jakubows/.bash_history
+
+9. Korzystając z komendy find, wyszukaj i wylistuj w postaci długiej
+wszystkie pliki regularne, które znajdują się w katalogu /usr/include
+i jego podkatalogach, a ich nazwa zaczyna się na literę c.
+
+$ find /usr/include -type f -name 'c*' -exec ls -l {} + | less
+
+10. Czy w Twoim katalogu domowym (z podkatalogami) są pliki modyfiko-
+wane wcześniej niż 2 dni temu? Jak to sprawdzić? Wylistuj je w postaci
+długiej. Zrób to raz z uwzględnieniem podkatalogów, a raz – bez.
+
++n - morre than n
+-n - less than n
+n - exactly n
+
+$ find ~ -type f -mtime +2 -exec ls -l {} +
+-rw------- 1 jakubows ietgrp 13337 lis  25 18:11 /home/ietgrp/jakubows/.bash_history
+-rw------- 1 jakubows ietgrp  7428 lis  18 15:14 /home/ietgrp/jakubows/.viminfo
+
+a bez podkatalogów:
+
+$ find ~ -maxdepth 1 -type f -mtime +2 -exec ls -l {} +				- maxdepth 0 to sam command line
+/home/ietgrp/jakubows/.bash_history  /home/ietgrp/jakubows/.viminfo
+
+11. Znajdź liczbę plików regularnych w /usr/include (bez podkatalo-
+gów) które zaczynają się na m i kończą na .h oraz których rozmiar nie przekracza 12KB.
+
+$ find /usr/include -type f -maxdepth 1 -size -12k -name 'm**.h' | wc -l
+11
+
+12. Przy pomocy komendy tar stwórz archiwum katalogu c2, a następnie
+dokonaj jego kompresji (np. przy pomocy programu gzip). Powtórz tę
+operację w jednym kroku z użyciem dwóch komend, a następnie jednej.
+Następnie usuń katalog c2, a następnie odtwórz go ze zbioru *.tar.gz
+(lub *.tgz).
+
+$ tar -cf archiwum.tar c2 && gzip archiwum.tar		komentarz: -c (compress) -f (typ pliku) [nazwa arhciwum] [co idzie do archiwum], && (jeśli pierwsze się wykona to...)
+
+$ tar -czf archiwum.tar.gz c2					- -z od razu dokona zipa
+
+$ rm -r c2 -> usunie katalog c2
+
+$ tar -xvf archiwum.tar.gz ->					- -x (extract) -v (list) -f (typ pliku)
+	c2/
+	c2/text/ls.txt
+	2/text/ls1.txt
+	c2/text/ls2.txt
+	c2/plik.txt
+	c2/bin/
+
+13. Sprawdź, ile miejsca na dysku zajmuje twój katalog osobisty i jakie
+ograniczenia zostały nałożone na jego rozmiar (komenda quota).
+
+$ quota -u         
+Disk quotas for user jakubows (uid 28561): 
+     Filesystem  blocks   quota   limit   grace   files   quota   limit   grace
+/dev/mapper/vz_data-student
+                     92  1048576 1179648              13  102400  115200   
+
+$cd ~
+$ du -s -h
+92K	.
+
+albo 
+
+$ du -sh
+92K	.
+
+$ quota -us
+Disk quotas for user jakubows (uid 28561): 
+     Filesystem   space   quota   limit   grace   files   quota   limit   grace
+/dev/mapper/vz_data-student
+                    92K   1024M   1152M              13    103k    116k     
+
+14. Zapoznaj się ze stronami manuala dla komend df i free. Określ
+rozmiary systemów plików dostępnych w systemie oraz stopień ich
+zajętości w odniesieniu do liczby bloków danych i liczby struktur i-node.
+
+$ df -ih
+
+15. Zidentyfikuj punkty montowania oraz typy używanych systemów
+plików za pomocą komend mount i lsblk. Jak uzyskać numery seryjne 
+fizycznych dysków?
+
+$ mount -l
+$ lsblk -o NAME,SERIAL		- "-o" [A],[B]   A i B to nazwy kolumn zapisane dużymi literami
+
+16. Korzystając z komend du oraz sort, zaproponuj takie ich powiązanie,
+które pozwoli wylistować w kolejności malejącej listę katalogów
+z katalogu /usr uporządkowaną według wykorzystania przestrzeni
+dyskowej przez te katalogi i ich podkatalogi.
+
+$ du /usr | sort -k 1 -n -r | less
+
+17. W katalogu $HOME/c2/text, korzystając z polecenia ln utwórz do-
+wiązanie symboliczne o nazwie symbol do pliku $HOME/c2/bin/moj_ls,
+zaś w katalogu $HOME/c2/bin dowiązanie twarde o nazwie twardy
+do pliku $HOME/c2/text/ls.txt. Przejdź do katalogu $HOME/c2
+i wylistuj jego zawartość rekurencyjnie w postaci długiej z numera-
+mi i-node. Jakie widzisz zależności w numerach i-node, rozmiarach
+plików i ich nazwach? Usuń plik $HOME/c2/text/ls.txt i doko-
+naj listowania ponownie. Jakie zależności występują obecnie? Usuń
+plik $HOME/c2/bin/mój_ls i wykonaj listowanie. Co stało się z
+dowiązaniem twardym?
+
+$ ln -s $HOME/c2/bin/moj_ls $HOME/c2/text/symbol 
+$ ln $HOME/c2/text/ls.txt $HOME/c2/bin/twardy
+
+$ ls -iRl
+przed:
+.:
+total 16
+229116246 -rw-r--r-- 1 jakubows ietgrp 4187 gru   1 13:55 archiwum.tar.gz
+234949054 drwxr--r-- 4 jakubows ietgrp 4096 gru   2 16:34 c2/
+230952381 drwxr-xr-x 2 jakubows ietgrp 4096 lis  22 20:26 help/
+
+./c2:
+total 20
+241043762 drwxr-xr-x 2 jakubows ietgrp 4096 gru   2 17:03 bin/
+235015224 drwx------ 2 jakubows ietgrp 4096 gru   2 17:03 text/
+234949059 -rw-r--r-- 1 jakubows ietgrp 9691 gru   1 12:06 text.txt
+
+./c2/bin:
+total 0
+241043775 -rw-r--r-- 1 jakubows ietgrp 0 gru   2 17:02 moj_ls
+235015229 -rw-r--r-- 2 jakubows ietgrp 0 gru   2 17:02 twardy 
+
+./c2/text:
+total 12
+235015229 -rw-r--r-- 2 jakubows ietgrp    0 gru   2 17:02 ls.txt
+235015230 -r--r----- 1 jakubows ietgrp 9691 gru   1 12:28 ls2.txt
+235015245 lrwxrwxrwx 1 jakubows ietgrp   35 gru   2 17:03 symbol -> /home/ietgrp/jakubows/c2/bin/moj_ls
+
+i-node symbol < i-node moj_ls
+i-node twardy == i-node ls.txt
+
+po:
+
+.:
+total 16
+229116246 -rw-r--r-- 1 jakubows ietgrp 4187 gru   1 13:55 archiwum.tar.gz
+234949054 drwxr--r-- 4 jakubows ietgrp 4096 gru   2 16:34 c2/
+230952381 drwxr-xr-x 2 jakubows ietgrp 4096 lis  22 20:26 help/
+
+./c2:
+total 20
+241043762 drwxr-xr-x 2 jakubows ietgrp 4096 gru   2 17:06 bin/
+235015224 drwx------ 2 jakubows ietgrp 4096 gru   2 17:05 text/
+234949059 -rw-r--r-- 1 jakubows ietgrp 9691 gru   1 12:06 text.txt
+
+./c2/bin:
+total 0
+235015229 -rw-r--r-- 1 jakubows ietgrp 0 gru   2 17:02 twardy
+
+./c2/text:
+total 12
+235015230 -r--r----- 1 jakubows ietgrp 9691 gru   1 12:28 ls2.txt
+235015245 lrwxrwxrwx 1 jakubows ietgrp   35 gru   2 17:03 symbol -> /home/ietgrp/jakubows/c2/bin/moj_ls
+
+Twarde przed: 235015229 -rw-r--r-- 2 jakubows ietgrp 0 gru   2 17:02 twardy Twarde po: 235015229 -rw-r--r-- 1 jakubows ietgrp 0 gru   2 17:02 twardy
+
+2 --> 1, zniknęło jedno dowiązanie twarde 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Zadanie sprawdzające:
+
+Poniższe zadanie wykorzystuje kompleksowo wiedzę z tego laboratorium.
+Postaraj się wykonać je samodzielnie w domu. Jeżeli masz z nim problemy,
+przestudiuj ponownie materiały źródłowe, rozwiąż wcześniejsze zadania
+i podejmij kolejną próbę.
+Podaj pełną komendę zwracającą konkretną wartość (nie należy np.
+liczyć wierszy „ręcznie”):
+
+1. Znajdź plik w swoim katalogu domowym, który był najdawniej
+modyfikowany.
+
+$ find $HOME -type f -exec ls -lt {} + | tail -n 1
+-rw------- 1 jakubows ietgrp  7428 lis  18 15:14 /home/ietgrp/jakubows/.viminfo
+
+2. Ile katalogów znajduje się w /usr/include?
+
+$ find /usr/include -type d | wc -l         
+2020
+
+3. Ile jest plików w /usr/include (bez podkatalogów), których nazwa
+składa się z 6 liter, zaczyna się na m i kończy na .h?
+
+$ find /usr/include -type f -maxdepth 1 -name 'm**.h' | awk -F'/' '{print $4}' | grep -E '^.{6}$'
+mpfr.h
+math.h
+
+alternatywna metoda po konsultacji z innymi:
+
+$ find /usr/include -type f -maxdepth 1 -name 'm*' | awk -F'/' '{if(length($4) == 6){print $4}}' | grep -E 'h$'
+mpfr.h
+math.h
+
+4. Ile jest plików regularnych w katalogu i podkatalogach /usr/include,
+które mają rozmiar większy niż 12000B.
+
+$ find /usr/include -type f -size +12000c | wc -l
+3876
+
+5. Ile jest plików w /usr/bin o wielkości do 1MB?
+
+$ find /usr/bin -type f -size -1M | wc -l		- nie działa, manual mówi, że syntax nie interpretuje liczby "1" poprawnie
+0
+
+$ find /usr/bin -type f -size -1024k | wc -l	- stąd konwersja na kilobajty !!
+2233
+
+
+
+
+
+Nikodem Jakubowski
+
+Laboratorium 4 9.12.2022r. 
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Zadania:
+
+	1. Zapoznaj się z pomocą dotyczącą komendy ps. Ustal, w jaki sposób
+	można:
+	• określić numer procesu (PID) i numer procesu rodzica,
+	• określić zajmowaną pamięć i czas uruchomienia,
+	• określić terminal,
+	• ustalić, jakim (pełnym) poleceniem został wywołany proces.
+
+Czym różnią się opcje charakterystyczne dla UNIX i BSD?
+
+$ ps -ef
+
+PID - numer procesu
+PPID - numer procesu rodzica
+STIME - czas startu
+%MEM - zajęta pamięć
+TTY - terminal
+COMMAND/CMD - komenda wywołująca proces
+
+Opcje Unixowe są poprzedzane myślnikiem, a BSD nie
+
+	2. Zaproponuj postać komendy pozwalającej zwrócić informacje o wła-
+	ścicielu procesu, numerze PID, wartościach priorytetu i parametru
+	NICE oraz z jakiego terminala korzysta proces. W jaki sposób można
+	specyfikować oczekiwane kolumny?
+
+$ ps -eo user,pid,pri,ni,tty				(-e "wszystkie procesy" -o "format kolumn ktore wybierzemy")
+
+	3. Zapoznaj się z możliwościami zmiany priorytetu wykonywanego
+	procesu.
+
+• Utwórz w swoim katalogu domowym katalog c3. Przejdź do katalogu
+$HOME/c3. Utwórz w nim plik o nazwie prog.c, zawierający
+następujący kod programu w języku C:
+int main (int c, char *d[]){
+double a, b;
+while (1) {
+a = 12.345543;
+b = 0.456456;
+a = a*b;
+b = a/b;
+}
+return 0;
+}
+
+$ mkdir c3							- tworzę katalog c3
+$ nano prog.c						- tworzę plik i wprowadzam kod programu
+
+• Skompiluj kod źródłowy programu poleceniem gcc -o prog prog.c.
+Uruchom otrzymany program w tle. Wykorzystaj &.
+
+$ gcc -o prog prog.c					- kompiluję
+$ ./prog &							- otwieram program w tle
+
+• Ile pamięci zajmuje ten proces, jakie są wartości priorytetu i parame-
+tru NICE tego procesu?
+
+% ps -o command,pid,pri,ni
+COMMAND                       PID PRI  NI
+-bash                        3550  19   0
+./prog                       8430  19   0
+ps -o command,pid,pri,ni     8434  19   0
+
+• Obniż wartość jego parametru NICE, korzystając z komendy renice.
+Porównaj wartości priorytetu i parametru NICE w obu przypadkach.
+
+$ renice 5 8430 
+8430 (process ID) old priority 0, new priority 5
+
+$ ps -o command,pid,pri,ni
+COMMAND                       PID PRI  NI
+-bash                        3550  19   0
+./prog                       8430  14   5
+ps -o command,pid,pri,ni     8851  19   0
+
+• Sprawdź procent wykorzystania czasu procesora przez Twoje procesy,
+wartości priorytetu i parametru NICE w kilku odstępach czasu, gdy
+pracują one ze standardowym i obniżonym priorytetem.
+
+$ ps -o command,pid,pri,ni,pcpu
+COMMAND                       PID PRI  NI %CPU
+-bash                        3550  19   0  0.0
+./prog                      10315  19   0 99.3
+ps -o command,pid,pri,ni,pc 10317  19   0  0.0
+
+$ renice 19 10315
+10315 (process ID) old priority 0, new priority 19
+
+$ ps -o command,pid,pri,ni,pcpu
+COMMAND                       PID PRI  NI %CPU
+-bash                        3550  19   0  0.0
+./prog                      10315   0  19 99.8
+ps -o command,pid,pri,ni,pc 10383  19   0  0.0
+ 
+• Jakie zależności występują między wartością parametru NICE,
+a priorytetem?
+
+PRI (19) - NI (5) == 14					- wniosek, parametr nice obniża liczbę przy priorytecie, ale zwieksza jego priorytet, *pri  PRI       priority of the process.  Higher number means lower priority)
+
+• Wylistuj wszystkie programy pracujące pod kontrolą bieżącej
+powłoki (polecenie jobs).
+
+$ jobs
+[1]+  Running                 ./prog &
+
+• Usuń uruchomione w tym zadaniu programy (polecenie kill).
+
+$ kill 8430 									- działa na program działajacy w tle, jesli jest pierwszoplanowy to trzeba dac kill -9 [nazwa programu]
+[1]+  Terminated              ./prog
+
+• Uruchom program prog ponownie, tym razem z obniżoną wartością
+parametru NICE i w tle. Jakie wartości priorytetu i parametru NICE
+posiada zadanie teraz? Jak zajmowany jest czas procesora? Po spraw-
+dzeniu tych parametrów, zakończ wykonywanie uruchomionego
+programu.
+
+$ nice -20 ./prog &
+[1] 10143
+jakubows@student:~/c3$ 
+jakubows@student:~/c3$ 
+jakubows@student:~/c3$ ps -o command,pid,pri,ni
+COMMAND                       PID PRI  NI
+-bash                        3550  19   0
+./prog                      10143   0  19
+ps -o command,pid,pri,ni    10148  19   0
+
+$ ps -o command,pid,pri,ni,pcpu
+COMMAND                       PID PRI  NI %CPU
+-bash                        3550  19   0  0.0
+./prog                      10143   0  19 99.2
+ps -o command,pid,pri,ni,pc 10250  19   0  0.0
+
+zajmuje 99.2% CPU
+
+• W jakim zakresie można zmieniać parametr NICE?
+
+Nice działa w zakresie od -19 do 20.
+	
+	4. Uruchom program prog jeszcze raz, jako pierwszoplanowy. Zobacz,
+	jak wygląda jego wpis w wynikach polecenia ps. Wyloguj się i zaloguj
+	ponownie. Czy proces nadal działa?
+
+$ ./prog
+Ctrl Z
+$bg
+$exit 
+
+Po wylogowaniu się, proces przestał działać
+
+	5. Powtórz powyższą operację, ale uruchom proces w tle. Czy po wylogo-
+	waniu i zalogowaniu proces dalej istnieje?
+
+Program dalej nie działa po wylogowaniu.
+
+	6. Uruchom program prog w tle tak, aby wykonywał się on mimo
+	odłączenia się od systemu. Gdzie szukać tego, co program wypisuje na
+	ekran? Usuń uruchomiony proces.
+
+ochrona programu przed odlaczeniem od systemu:
+$ nohup ./prog &
+[1] 2517
+nikodem@ASUS-Nikodem:~/c3$ nohup: ignoring input and appending output to 'nohup.out'
+
+po wylogowaniu:
+$tail -f nohup.out	-do znalezienie outputu prog po wylogowaniu i powrocie
+
+normalnie:
+	$ gcc prog.c		- najpierw kompilujemy
+	$ ./a.out			- później wyświetlamy output
+
+	można też tak: 
+
+		$gcc -o prog prog.c	- gdzie prog to output file!
+		$./prog &
+		$./prog
+
+	7. Uruchom program prog w tle. Wyślij do niego sygnał SIGSTOP. Jaki
+	jest stan uruchomionego procesu? Jak z czasem zmienia się stopień
+	wykorzystania procesora przez ten proces? Do zatrzymanego procesu
+	wyślij sygnał SIGCONT. Jaki jest teraz stan procesu? Co dzieje się
+	z wartością w kolumnie opisującej stopień wykorzystania procesora?
+	Usuń uruchomiony proces.
+
+
+Proces jest wstrzymany, stopień wykorzystania procesora maleje do zera. 
+
+Po uzyciu kill -s CONT program jest kontynuowany, wykorzystanie procesora rośnie i znowu zajmuje 100 %.
+
+	8. W katalogu $HOME/c3 utwórz plik o nazwie signal.c, zawierający
+	kod źródłowy programu w języku C zamieszczony poniżej (do pobrania
+	poleceniem: wget galaxy.agh.edu.pl/~boryczko/signal.c):
+	• Skompiluj program analogicznym poleceniem, jak poprzedni.
+	• Uruchom program. Co stanie się z procesem, jeśli wyślemy do niego
+	sygnał SIGQUIT. Jaka jest reakcja programu na ten sygnał?
+
+Dzialam ...
+Dzialam ...
+Dzialam ...
+Otrzymalem sygnal 3
+
+	• Jak proces zareaguje na sygnał SIGTSTP. Przejdź do drugiej konsoli.
+	Ustal numer uruchomionego programu.	(najłatwiej poleceniem top)
+
+Dzialam ...
+Dzialam ...
+Dzialam ...
+
+[1]+  Stopped                 ./signal
+
+	• Wyślij do niego sygnał SIGTERM.
+
+Otrzymalem sygnal 15
+Dzialam ...
+Dzialam ...
+
+	• Jak zakończyć wykonywanie procesu? Funkcje obsługi których
+	sygnałów nie mogą zostać podmienione?
+
+$kill -9 [pid]
+Dzialam ...
+Dzialam ...
+Killed
+[1]+  Killed                  ./signal
+
+	9. Podaj PID procesu zastopowanego, który zużywa najwięcej pamięci
+	wirtualnej.
+
+$ ps -eo vsz,pid,s | awk '{if($3=="T"){print $1,$2}}' | sort -k 1 -n | tail -n 1 | awk '{print $2}'
+
+	10. Podaj nazwę użytkownika, który ma najwięcej procesów z zerową
+	wartością parametru NICE.
+
+$ ps -eo user,nice | awk '{if($2 == 0){print}}' | sort | uniq -c | head -n 1
+     17 apache     0
+
+	11. Podaj numery PID trzech procesów, które mają najwięcej pamięci
+	wirtualnej.
+
+$ ps -eo pid,vsz | sort -k 2 -n | tail -n 3 | awk '{print $1}'
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Zadanie sprawdzające:
+
+1. Jak wypisać wszystkie dostępne nazwy kolumn dla komendy ps?
+
+$ps L
+
+2. Jak wyświetlić procesy użytkownika root posortowane wg rozmiaru
+zużytej pamięci (np. size), używając tylko ps?
+
+$ ps -u root -o user,size,command --sort=size	(! man ps --> STANDARD FORMAT SPECIFIERS)
+
+USER      SIZE COMMAND
+root         0 [kthreadd/102]
+root         0 [khelper]
+root         0 [watchdog] <defunct>
+root       308 init [3]      
+root       332 /usr/sbin/syslogd
+root       340 /usr/sbin/crond -l notice
+root       348 /sbin/agetty --noclear 38400 tty1 linux
+root       348 /sbin/agetty 38400 tty2 linux
+root       488 /usr/libexec/postfix/master -w
+root       592 /usr/sbin/sshd
+root       592 sshd: seste [priv]
+root       592 sshd: ssoltys [priv]
+root       592 sshd: jakubows [priv]
+root       592 sshd: dawidf [priv]
+root       592 sshd: dawidf [priv]
+root       592 sshd: dawidf [priv]
+root       592 sshd: jakubcie [priv]
+root      1160 /sbin/udevd --daemon
+root      4256 /usr/extra/apache2/bin/httpd -k start
+root      4644 /usr/bin/perl -w /adm/rjob/rjobd
+root      7376 php-fpm: master process (/etc/php-fpm.conf)
+root      7796 php-fpm: master process (/etc/php7/php-fpm.conf)
+
+
+3. Ile jest procesów, których ojcem jest proces o PID równym 1?
+
+$ ps -eo ppid | awk '{if($1 == 1){print}}' | wc -l    
+61
+
+4. Znajdź użytkownika w systemie, który ma uruchomioną największą
+liczbę procesów.
+
+$ ps -eo user,s | awk '{if($2=="R"){print $1}}' | sort | uniq -c | sort -k 1 -n | tail -n 1 | awk '{print $2}'
+jakubows
+
+5. Znajdź proces, który zużył najwięcej czasu procesora.
+
+$ ps -eo time,command --sort time | tail -n 1             
+00:31:22 php-fpm: pool knmd.agh.edu.pl
+
+$ ps -eo time,pid,comm --sort time | tail -n 1
+00:37:00 26966 php-fpm
+
+6. Ile procesów potomnych ma bieżący terminal? Nie uwzględniaj komendy, która dokonuje obliczeń.
+
+$ echo $(( $(ps -eo uid,user,ppid,command | grep $$ | wc -l) - 0 ))			- z zerem odejmuje jeden od wyniku i wychodzi dobrze, z jedynka odjemuje dwa :(
+2
+
+
+
+
+
+
+
+
+
+
+
+
+Nikodem Jakubowski
+
+Laboratorium 5 22.12.2022r. 
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Zadania:
+
+1. Zapoznaj się ze składnią komend set, unset i env. Pracując z wyko-
+rzystaniem powłoki Bash, sprawdź wartości ustawionych zmiennych
+
+środowiskowych.
+• Czy zmienna środowiskowa noclobber jest zdefiniowana? Sprawdź
+wpływ tej zmiennej środowiskowej na sposób tworzenia, nadpi-
+sywania i dopisywania informacji do plików z wykorzystaniem
+mechanizmów przekierowywania strumieni danych (operatory >, >>,
+>|).
+
+$ noclobber
+-bash: noclobber: command not found
+
+Zmienna noclobber służy do zabezpieczenia własnych plików przed nadpisaniem ich przez inny program lub przekierowaniem
+
+• Powróć do ustawień pierwotnych. Uwaga: ustawienie wartości
+zmiennej środowiskowej SHELLOPTS następuje poleceniem:
+set –o noclobber
+
+$set +o noclobber		- powrót do ustawień pierwotnych
+
+2. W pliku o nazwie wyjscia.c zapisz następujący kod źródłowy programu:
+#include <stdio.h>
+int main () {
+fprintf (stdout, "Standardowe wyjscie\n");
+fprintf (stderr, "Standardowe wyjscie diagnostyczne\n");
+return 0;
+}
+
+Skompiluj program poleceniem: gcc –o wyjscia wyjscia.c. Uru-
+chom program wyjscia tak, aby wypisywane przez niego komunikaty
+zostały zapisane odpowiednio do plików std.txt oraz err.txt, a po-
+tem tak, aby oba komunikaty pojawiły się w jednym pliku o nazwie
+razem.txt.
+
+$ ./wyjscia 1> std.txt 2> err.txt 				# jeszcze jest stdin -> 0
+jakubows@student:~$ cat std.txt
+Standardowe wyjscie
+jakubows@student:~$ cat err.txt
+Standardowe wyjscie diagnostyczne 
+jakubows@student:~$ ./wyjscia &> razem.txt		# zarowno na stdout jak i stderr
+jakubows@student:~$ cat razem.txt
+Standardowe wyjscie diagnostyczne
+Standardowe wyjscie
+
+3. Korzystając z komendy set, sprawdź, ile ostatnio wydanych komend
+pamiętanych jest w shellu. Sprawdź, jakie komendy zostały ostatnio
+wydane. Zmień wartość zmiennej środowiskowej, odpowiadającej za tę
+wartość, na 20000.
+
+$ set | grep HISTSIZE
+HISTSIZE=500
+
+$ HISTSIZE=20000
+$ set | grep HISTSIZE
+HISTSIZE=20000
+
+4. Sprawdź, w jakim pliku pamiętana jest historia poleceń. Sprawdź listę
+historii poleceń komendą history. Wykonaj raz jeszcze ostatnie polece-
+nie rozpoczynające się od konkretnego znaku (składnia: !polecenie)
+oraz polecenie o konkretnym numerze.
+
+$ set | grep HISTFILE
+HISTFILE=/home/ietgrp/jakubows/.bash_history
+HISTFILESIZE=500
+
+$history -> pokaże historię poleceń
+$!h	-> pokaże ostatnie polecenie na h
+$!n	-> gdzie "n" to numer polecenia, wyświetli to polecenie 
+$!!	-> wyświetli ostatnie polecenie
+
+5. Istnieje zmienna środowiskowa, której wartość oznacza dopuszczalny
+czas pozostawienia terminala w bezczynności. Po upływie tego czasu
+system automatycznie zrywa sesję i odłącza użytkownika od systemu.
+Uruchom interpreter interaktywny i sprawdź działanie zmiennej
+TMOUT. W jakich jednostkach podawany jest czas bezczynności?
+
+$ bash	- aby włączyć interaktywny terminal
+$ TMOUT=3	- po 3 sekundach nastapi wylogowanie
+$ timed out waiting for input: auto-logout
+
+6. Uruchom powłokę Bash ponownie. Zmienna środowiskowa IGNORE-
+EOF, jeśli jest ustawiona (poleceniem export IGNOREEOF), zapobiega
+kończeniu pracy interpretera poleceń (wylogowywaniu się) przez naci-
+śnięcie kombinacji klawiszy Ctrl-d. Niestety, pięciokrotne naciśnięcie
+Ctrl-d powoduje odłączenie użytkownika od systemu. Nadanie zmien-
+nej wartości powoduje, że po tylukrotnym, ile wynosi wartość zmiennej,
+naciśnięciu Ctrl-d użytkownik zostanie od systemu odłączony. Sprawdź
+działanie zmiennej.
+
+$ bash
+$ IGNOREEOF=5
+$ Use "exit" to leave the shell.
+$ Use "exit" to leave the shell.
+$ Use "exit" to leave the shell.
+$ Use "exit" to leave the shell.
+$ Use "exit" to leave the shell.
+$ exit
+$ logout
+Connection to student.agh.edu.pl closed.
+
+7. Zmienna środowiskowa PATH przechowuje ścieżki dostępu do kata-
+logów, w których interpreter poszukuje programów do wykonania. Ze
+względów bezpieczeństwa nie ma w niej katalogu bieżącego. Zmodyfikuj
+wartość zmiennej PATH tak, aby ścieżka dostępu do katalogu bieżącego
+znalazła się na końcu ścieżek w tej zmiennej.
+
+$ export PATH="$PATH:$PWD"
+$ echo $PATH              
+/bin:/usr/bin:/usr/local/bin:/usr/games:/usr/lib64/qt/bin:.:/home/ietgrp/jakubows
+
+8. Postać podstawowego znaku zachęty linii komand definiuje zmienna
+środowiskowa PS1. Znak kontynuacji pojawia się, gdy linia z polece-
+niem nie została zakończona (na przykład, z powodu niezamknięcia
+cudzysłowu) lub ostatnim znakiem w linii poprzedniej jest odwróconego
+ukośnika (\ – ang. backslash). Znak kontynuacji jest zdefiniowany war-
+tością zmiennej środowiskowej PS2. Sprawdź wartości obu zmiennych.
+Ustaw wartość zmiennej PS1 tak, aby znak zachęty zawierał informacje
+o nazwie użytkownika, nazwie hosta, czasie w formacie 24-godzinnym
+oraz ścieżki dostępu do bieżącego katalogu. Zmień również postać PS2.
+
+$ PS1='\u@\h:\A\w\$'
+jakubows@student:14:10~$
+
+$ PS2='!'
+
+9. Zdarza się, iż wielokrotnie wykonujemy komendę o długiej liście opcji.
+Komendzie takiej można nadać krótką nazwę, czyli tzw. alias.
+• Sprawdź listę już zdefiniowanych aliasów.
+$alias	- nie ma żadnych
+$
+• Dodaj własny, o nazwie ll i postaci:
+
+ls –al --color=always | less
+
+• Dlaczego, pomimo wymuszenia kolorowania nazw plików, pojawiają
+się one bez kolorów? Popraw alias, aby działał poprawnie.
+
+$alias ll='ls -al --color=always | less -R'
+$alias
+alias ll='ls -al --color=always | less -R'
+
+10. Aby wprowadzone w środowisku interpretera poleceń zmiany były
+aktywne, należy je zapisać w odpowiednich plikach konfiguracyjnych,
+różnych dla różnych rodzajów interpretera (logujący, interaktywny).
+• Utwórz lub zmodyfikuj pliki konfiguracyjne tak, aby zmieniony
+znaczek zachęty PS1 był zdefiniowany tylko w interpreterze logują-
+cym, alias obowiązywał we wszystkich interpreterach, zaś zmienne
+IGNOREEOF oraz TMOUT były zdefiniowane tylko w interpreterze
+interaktywnym.
+
+Zrobimy to przez dopisane linijek do plików
+
+$ echo export PS1='\u@\h \A \w \$' >> $HOME/.profile
+
+$ echo alias ll='ls -al --color=always | less -R' >> $HOME/.profile
+
+$ echo export IGNOREEOF=5 >> $HOME/.bashrc
+
+$ echo export TMOUT=30 >> $HOME/.bashrc
+
+• Zmodyfikuj wartość zmiennej PATH tak, aby zawierała ona ścieżkę
+dostępu do katalogu bieżącego, a nowa wartość zmiennej była
+dostępna w interpreterze logującym i interaktywnym.
+
+$echo export PATH="$PATH:$PWD" >> ~/.bashrc
+$echo export PATH="$PATH:$PWD" >> ~/.profile
+
+• W trakcie odłączania się od systemu, ekran powinien być czyszczony Użyj wpisu w pliku ~/.bash_logout.
+(polecenie clear).
+
+$echo clear >> ~/.bash_logout
+
+Zadanie sprawdzające
+Poniższe zadanie wykorzystuje kompleksowo wiedzę z tego laboratorium.
+Postaraj się wykonać je samodzielnie w domu. Jeżeli masz z nim problemy,
+przestudiuj ponownie materiały źródłowe, rozwiąż wcześniejsze zadania
+i podejmij kolejną próbę.
+Podaj pełną komendę zwracającą konkretną wartość (nie należy np.
+liczyć wierszy „ręcznie”):
+
+1. Jak „doświadczalnie” sprawdzić, jaki jest znak kontynucji (PS2)?
+
+Można specjalnie dać backlash na końcu komendy.
+
+2. Ile jest w systemie zmiennych, które nie są eksportowane do środowiska
+potomnego?
+
+$ echo $(($(set | grep '^[A-Z]' | wc -l)-$(env | grep '^[A-Z]' | wc -l ))
+30
+
+3. Jak uruchomić nowy interpreter interaktywny?
+
+$tmux		- multiplekser
+
+
+
+
+Nikodem Jakubowski
+
+Laboratorium 5 20.01.2023r. 
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Zadania:
+
+	2. Zapoznaj się z działaniem polecenia trap. Spróbuj napisać skrypt,
+	który będzie przechwytywał kilka wybranych sygnałów (np. SIGINT)
+	i wyświetlał komunikat, jaki sygnał został przechwycony.
+
+ODP:
+
+#!/bin/bash
+
+trap 'echo "SIGINT signal detected"' SIGINT		#co robi, gdy dostanie dany sygnal 
+trap 'echo "SIGTERM signal detected"' SIGTERM
+trap 'echo "SIGHUP signal detected"' SIGHUP
+
+echo "Press Ctrl+C to generate a SIGINT signal"
+echo "Send a SIGTERM signal with the command 'kill -SIGTERM $$'"
+echo "Send a SIGHUP signal with the command 'kill -SIGHUP $$'"
+
+while true; do
+  sleep 1			#zeby nie zabieral za duzo zasobow !!
+done
+
+	3. Napisz skrypt, który przyjmuje trzy argumenty:
+	• ścieżkę do pliku regularnego, który użytkownik może czytać,
+	• ścieżkę do katalogu, gdzie użytkownik ma prawo do zapisu,
+	• liczbę większą od zera.
+	Podany (argument 1.) plik kopiuje do podanego katalogu (argument 2.)
+	tyle razy, ile wynosi argument 3. Na końcu nazwy każdej kopii dołącz
+	sufiks -kopia- i numer kopii.
+	Przykładowe wywołanie:
+	./skrypt ala/ma/kota.txt /tmp/moj_katalog 5 powinno
+	skutkować następującą zawartością katalogu /tmp/moj_katalog:
+	kota.txt-kopia-1
+	kota.txt-kopia-2
+	kota.txt-kopia-3
+	kota.txt-kopia-4
+	kota.txt-kopia-5
+
+ODP:
+
+#!/bin/bash
+
+file_path=$1
+dest_path=$2
+num_copies=$3
+
+for i in $(seq 1 $num_copies); do				#seq tworzy sekwencje liczb od 1 do $num_copies
+  cp $file_path $dest_path/kota.txt-kopia-$i
+done
+
+	4. Napisz skrypt, który w nieskończonej pętli będzie co 3 sekundy wypisze 
+	liczbę aktualnie obecnych procesów w systemie. Zakończenie działania
+	skryptu powinno odbywać się poprzez kombinację klawiszy Ctrl-c.
+
+ODP:
+
+#!/bin/bash
+
+trap 'echo "Program sie zjebal, bo dales CTRL C"; exit' SIGINT
+while true; do
+	ile_procesow=$(ps -e | wc -l)
+	echo "Liczba aktualnych procesow to: $ile_procesow"
+	sleep 3
+done
+
+	5. Stwórz skrypt, który jako argument wywołania otrzymuje numer UID.
+	Jeśli został on uruchomiony bez argumentu, to pyta o UID użytkownika.
+	Skrypt, korzystając z pliku /etc/passwd, wypisuje zawartość 5. kolum- 
+	ny linii opisującej użytkownika o podanym UID. Jeśli jako argument
+	podane zostanie więcej numerów UID, wypisz analogiczną informację
+	dla wszystkich wskazanych użytkowników.
+
+ODP:
+
+#!/bin/bash
+
+if [ $# -eq 0 ];then
+
+read -p "Podaj uid: " uid
+
+else
+        uid=$@
+fi
+
+for i in $uid;do
+        line=$(cat /etc/passwd | awk -F: '{if($3=='$i'){print $5}}')
+        echo "Uzytkownik o id: $i to: $line"
+done
+
+	6. Utwórz skrypt, który wypisuje z katalogu, w którym został uruchomio-
+	ny, nazwy wszystkich plików i katalogów z zaznaczeniem, czy jest to
+	plik regularny, czy katalog. Sam skrypt powinien zostać na takiej liście
+	pominięty. Dla plików wypisz dodatkowo prawa dostępu dla właściciela.
+
+ODP:
+
+#!/bin/bash
+
+script=$(basename $0)
+
+for i in $(ls -a | grep -v "$script"); do
+        if [ -d "$i" ];then
+                echo "$i : directory; prawa dostepu: $(ls -dl $i | awk '{print $1}')"
+        elif [ -f "$i" ];then
+                echo "$i : file; prawa dostepu: $(ls -l $i | awk '{print $1}')"
+        fi
+done
+
+
+	7. Napisz skrypt, który wyświetli prawa dostępu do wskazanego jako argument pliku z punktu widzenia użytkownika, który wywołał skrypt. 
+	Mogą być potrzebne wyrażenia warunkowe, pozwalające na sprawdzanie uprawień.Jeśli nie został podany żaden argument, skrypt powinien o niego
+	poprosić.
+
+ODP:
+
+#!/bin/bash
+
+if [ $# -eq 0 ]; then # Check if no arguments were passed
+  read -p "Enter a file name: " file # Request input for file name
+else
+  file=$1 # Set file name to first argument passed
+fi
+
+if [ ! -f $file ]; then
+        echo "To nie jest plik!"
+        exit 1
+fi  
+
+if [ -e "$file" ]; then # Check if file exists
+  if [ -r "$file" ]; then # Check if user has read permission
+    echo "You have read permission for $file"
+  else
+    echo "You do not have read permission for $file"
+  fi
+
+  if [ -w "$file" ]; then # Check if user has write permission
+    echo "You have write permission for $file"
+  else
+    echo "You do not have write permission for $file"
+  fi
+
+  if [ -x "$file" ]; then # Check if user has execute permission
+    echo "You have execute permission for $file"
+  else
+    echo "You do not have execute permission for $file"
+  fi
+else
+  echo "The file $file does not exist"
+fi
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Zadanie sprawdzające:
+
+
+Napisz skrypt, który:
+1. co 2 sekundy wypisuje listę zalogowanych użytkowników razem
+z liczbą procesów, które zostały przez nich uruchomione, a w przypadku
+wciśnięcia przez użytkownika Ctrl-c wypisze aktualną datę i zakończy
+działanie,
+
+ODP:
+
+#!/bin/bash
+
+trap "echo $(date); exit 0" INT
+
+while true; do
+  zalogowani=$(who | awk '{print $1}')
+  for i in $zalogowani; do
+        echo "$i, ilosc procesow: $(ps -u "$(id -u $i)" | grep -v "[A-Z]" | wc -l)"
+  done
+  sleep 2
+  echo "Aktualizacja<<<<<<<<<<<<<<<< "
+done
+
+
+2. otrzyma ścieżki do katalogów i dla każdego z nich policzy, ile jest
+w nich (oraz rekursywnie w podkatalogach) plików regularnych,
+
+ODP:
+
+#!/bin/bash
+
+directories=$@
+
+for i in "$directories"; do
+        if [ ! -d "$i" ]; then
+                echo "To nie jest katalog"
+                exit 1
+        else
+                echo "Tyle jest plikow regularnych w podkatalogach rekursywnie: " $(find "$i" -type f | wc -l)
+        fi
+done
+	
+3. skopiuje plik, podany jako 1. argument, do wskazanego katalogu
+docelowego, podanego jako 2. argument (skrypt powinien obsługiwać
+sytuacje wyjątkowe związane z brakiem dostępu do wskazanego pliku
+i katalogu i wyświetlać wtedy stosowne komunikaty).
+
+ODP:
+
+#!/bin/bash
+
+src_file=$1
+dst_dir=$2
+
+if [ ! -f "$src_file" ]; then
+    echo "Error: $src_file does not exist or is not a regular file."
+    exit 1
+fi
+
+if [ ! -d "$dst_dir" ]; then
+    echo "Error: $dst_dir does not exist or is not a directory."
+    exit 1
+fi
+
+if [ ! -w "$dst_dir" ];then
+        echo "Nie mozna kopiowac do tego folderu z powodu braku uprawnien"
+        exit 1
+fi
+
+cp "$src_file" "$dst_dir"
+
+
+
+
+GRA 
+
+#!/bin/bash
+
+# Generate a random number between 1 and 100
+answer=$((RANDOM % 100 + 1))
+
+# Start the game
+while true; do
+    # Ask the user for their guess
+    read -p "Guess a number between 1 and 100: " guess
+
+    # Check if the guess is correct
+    if [[ $guess -eq $answer ]]; then
+        echo "Congratulations, you guessed the correct number!"
+        break
+    elif [[ $guess -lt $answer ]]; then
+        echo "Too low, try again."
+    else
+        echo "Too high, try again."
+    fi
+done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
