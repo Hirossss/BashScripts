@@ -5,6 +5,8 @@ if [ $# -ne 2 ]; then
         exit 1
 fi
 
+start=$(date +%s)
+
 if ! [[ $1 =~ ^[0-9]+$ ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
     echo "Oba argumenty musz ^e by ^g liczbami ca ^bkowitymi."
     exit 1
@@ -27,6 +29,8 @@ while true; do
         if [ $answer -le 0 ]; then
                 bad_ans=$((no_questions - no_of_successes-1))
                 echo "Proby: $((no_questions-1)), dobre odp: $no_of_successes, zle odp: $bad_ans"
+                end=$(date +%s)
+                echo "Czas trwania w sekundach: $((end - start)) "
                 exit 0
         elif [ $answer -eq $multiplication ]; then
                 ((no_of_successes++))
