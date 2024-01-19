@@ -27,7 +27,7 @@ while true; do
         if [ $answer -le 0 ]; then
                 bad_ans=$((no_questions - no_of_successes-1))
                 echo "Proby: $((no_questions-1)), dobre odp: $no_of_successes, zle odp: $bad_ans"
-                exit 1
+                exit 0
         elif [ $answer -eq $multiplication ]; then
                 ((no_of_successes++))
         fi
