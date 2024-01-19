@@ -35,7 +35,7 @@ Podciąg znaków: ${string:position:length}
 Zamiana podciągu: ${string/old/new}
 
 
-Parsowanie z linii komend: arr=("${$@:first:length}") albo arr=("${$@:2}") wszystkie od drugiego argumentu
+Parsowanie z linii komend: arr=("${@:first:length}") albo arr=("${@:2}") wszystkie od drugiego argumentu
 
 
 Sprawdzanie czy liczba calkowita.
