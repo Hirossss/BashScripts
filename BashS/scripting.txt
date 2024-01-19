@@ -1,0 +1,50 @@
+Operatory dla zmiennych:
+Przypisanie wartości: variable=value
+Odczyt wartości: $variable
+Długość ciągu znaków: ${#variable}
+Konkatenacja ciągów znaków: concatenated="${string1}${string2}"
+
+
+Operatory arytmetyczne:
+Dodawanie: result=$((a + b)) (lub krócej: ((result = a + b)))
+Odejmowanie: result=$((a - b))
+Mnożenie: result=$((a * b))
+Dzielenie: result=$((a / b))
+Modulo (reszta z dzielenia): result=$((a % b))
+
+
+Operatory porównań:
+Równość: [ "$a" == "$b" ]
+Nierówność: [ "$a" != "$b" ]
+Mniejsze niż: [ "$a" -lt "$b" ]
+Mniejsze lub równe: [ "$a" -le "$b" ]
+Większe niż: [ "$a" -gt "$b" ]
+Większe lub równe: [ "$a" -ge "$b" ]
+
+
+Operatory logiczne:
+AND logiczny: && (np. [[ "$a" -eq 1 ]] && [[ "$b" -eq 2 ]])
+OR logiczny: || (np. [[ "$a" -eq 1 ]] || [[ "$b" -eq 2 ]])
+Negacja logiczna: ! (np. [[ ! -f "$file" ]])
+
+
+Operatory dla ciągów znaków:
+Porównywanie ciągów: [ "$string1" == "$string2" ]
+Dopasowanie do wzorca: [[ "$string" == pattern* ]]
+Podciąg znaków: ${string:position:length}
+Zamiana podciągu: ${string/old/new}
+
+
+Parsowanie z linii komend: arr=("${$@:first:length}") albo arr=("${$@:2}") wszystkie od drugiego argumentu
+
+
+Sprawdzanie czy liczba calkowita.
+#!/bin/bash
+
+# Sprawdź, czy wszystkie argumenty (od trzeciego wzwyż) są liczbami
+for arg in "${@:3}"; do
+    if ! [[ "$arg" =~ ^[0-9]+$ ]]; then
+        echo "Argumenty muszą być liczbami całkowitymi."
+        exit 1
+    fi
+done
